@@ -22,7 +22,12 @@
 
 (function ($) {
 
+var DateTime = {
+    MONTH: 'MONTH',
+    YEAR: 'YEAR'    
+}
 var TimelineWidget  = {
+    
 /*
          dateEvent, //start
          dateEvent, //end
@@ -87,10 +92,15 @@ var TimelineWidget  = {
         var optionBandInfos = this.options.bandInfos;
 	var bandInfos = new Array(optionBandInfos.length);
 	for (var i = 0; i < optionBandInfos.length; ++i ) {
-	    bandInfos[i] = Timeline.createBandInfo(optionBandInfos[i]);
+	    var obj = $.extend({}, optionBandInfos[i]);
+	    // obj.prototype = optionBandInfos[i];
+	    if (obj.intervalUnit) {
+		obj.intervalUnit = Timeline.DateTime[obj.intervalUnit];
+	    }
+	    bandInfos[i] = Timeline.createBandInfo(obj);
 	    bandInfos[i].eventSource = this.getEventSource();
-            //bandInfos[1].syncWith = 0;
-	    //bandInfos[1].highlight = true;
+	    if (obj.syncWith != null) bandInfos[i].syncWith = obj.syncWith;
+	    if (obj.highlight != null) bandInfos[i].highlight = obj.highlight;
 	}
 	this.options.tl = Timeline.create(this.element.context, bandInfos);
     },
@@ -109,12 +119,12 @@ var TimelineWidget  = {
         bandInfos: [
 	  {
               width:          "70%",
-	      intervalUnit:   Timeline.DateTime.MONTH,
+	      intervalUnit:   DateTime.MONTH,
 	      intervalPixels: 100
 	  },
 	  {
 	      width:          "30%",
-	      intervalUnit:   Timeline.DateTime.YEAR,
+	      intervalUnit:   DateTime.YEAR,
 	      intervalPixels: 200,
 	      syncWith:  0,
 	      highlight: true
@@ -122,6 +132,6 @@ var TimelineWidget  = {
     }
 };
 
-$.widget("ui.simile.timeline", TimelineWidget);
+$.widget("ui.similetimeline", TimelineWidget);
 
  })(jQuery);
